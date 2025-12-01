@@ -1,0 +1,185 @@
+================================================================================
+EMA DOCUMENT QUALITY EVALUATION - PIPELINE OUTPUT
+================================================================================
+Document: SALES_INTELLIGENCE_RESPONSE.pdf
+Pipeline: v1.0 | Model: gemini-2.0-flash | Timestamp: 2025-11-30 14:23:17 UTC
+================================================================================
+
+VERDICT: ❌ REJECT - CRITICAL FAILURES
+Score: 64/100 | Blocking Issues: 3 | Est. Fix: 4 hrs
+
+================================================================================
+GATE 1: INTEGRITY (Fact & Source Validation) - FAIL
+================================================================================
+Runtime: 1.8s | Template: TEMPLATE_A (Chain-of-Verification)
+
+⚠️  DEGRADED MODE: No source snippets provided in pipeline context.
+    Running internal consistency checks only. External fact verification SKIPPED.
+
+Claims Extracted: 47 | Consistency Checks: 42 PASS, 5 FAIL
+
+CRITICAL FAILURES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[F1] ❌ UNSUBSTANTIATED COMPETITIVE CLAIM
+Claim: "Market Share: 12.3% in core vertical"
+Location: Section 1.1
+Verdict: FAIL - No source citation, legal risk for competitive claim
+Required: Add <cite source="..."> OR remove specific number
+
+[F2] ❌ TEMPORAL INCONSISTENCY  
+Claim: "Annual revenues exceeding $450M" (stated as fact)
+Cross-ref: Chart 1.1 shows "$450M (2025 proj)"
+Verdict: FAIL - Projection stated as current reality
+Fix: Add "projected" qualifier
+
+[F3] ⚠️  CITATION HYGIENE - 8 quantitative claims lack sources
+Examples: TAM $47.8B, competitor shares, sales cycle benchmarks
+Impact: MEDIUM - Reduces credibility, not blocking
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Gate 1 Score: 58/100 | Status: CONDITIONAL PASS
+
+================================================================================
+GATE 2: LOGIC (Math & Internal Consistency) - FAIL
+================================================================================
+Runtime: 2.4s | Template: TEMPLATE_C (Math-to-Code Delegator)
+
+Calculations Found: 5 | Verified: 2 PASS, 3 FAIL
+
+CRITICAL MATH ERRORS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[M1] 🚨 ROI CALCULATION - CRITICAL ERROR
+Claim: "3-year ROI of 285%" (Executive Summary)
+
+Extraction (TEMPLATE_C):
+{
+  "formula": "ROI",
+  "vars": {"value": 192400000, "investment": 2480000},
+  "code": "def verify(): return ((192.4e6 - 2.48e6) / 2.48e6) * 100"
+}
+
+Execution:
+>>> verify()
+>>> 7658.06%
+
+Document Claim: 285%
+Calculated: 7658%
+Discrepancy: 7373 percentage points
+
+Verdict: ❌ CRITICAL FAIL - Financial misrepresentation
+Impact: DEAL-KILLER - CFO credibility destroyed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[M2] ✅ CAGR: 16.4% - PASS (calculated: 16.39%)
+[M3] ✅ YoY Growth: 13.1% - PASS (calculated: 13.07%)
+
+CONSISTENCY CHECK (TEMPLATE_B: Logic Forensics):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Entity: "Market Share"
+Mentions:
+  - "12.3% in core vertical" (Section 1.1)
+  - "1.2% of TAM" (Section 4.1)
+
+Logic Check: Relationship unclear - same entity, different scopes?
+Verdict: ⚠️  AMBIGUOUS - Not contradictory but confusing
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Gate 2 Score: 52/100 | Status: FAIL
+
+================================================================================
+GATE 3: STRATEGY (Feasibility & Business Fit) - FAIL
+================================================================================
+Runtime: Pass 1: 1.1s | Pass 2: 3.6s | Template: TEMPLATE_D (Agentic Rubric)
+
+[PASS 1: RUBRIC GENERATION]
+Input: target="C-Suite", doc_type="SALES_INTELLIGENCE", intent="Partnership Pitch"
+
+Generated Rubric:
+{
+  "criteria": [
+    {"name": "Business Outcomes", "weight": 0.30, "constraint": "ROI/revenue focus"},
+    {"name": "Risk Transparency", "weight": 0.25, "constraint": "Downside scenarios"},
+    {"name": "Strategic Feasibility", "weight": 0.30, "constraint": "Achievability check"},
+    {"name": "Actionability", "weight": 0.15, "constraint": "Clear next steps"}
+  ]
+}
+
+Constraint Validation: ✅ PASS (business outcome + risk + actionability present)
+
+[PASS 2: EVALUATION AGAINST RUBRIC]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Criterion: Strategic Feasibility (30%) - Score: 42/100 ❌ CRITICAL FAIL
+
+🚨 OPERATIONAL CONTRADICTIONS DETECTED:
+
+[S1] INFEASIBLE GROWTH TRAJECTORY
+Claim: Implied 12.3% → 22%+ market share in 3 years (to reach leadership)
+Gap to close: ~10 percentage points
+
+Contradictory Evidence:
+  - 18% customer churn (Section 1.3)
+  - Sales cycle: 147 days vs benchmark 89 days (64% slower)
+  - CAC +28% YoY (worsening unit economics)
+
+Math Reality Check:
+  • To gain +10% share with 18% churn = need +28% gross growth annually
+  • At $42K CAC increasing 28%/year = unsustainable burn rate
+  
+Verdict: ❌ FAIL - Growth claim contradicts operational metrics
+Impact: HIGH - Board-level scrutiny risk
+
+[S2] EXECUTION CAPACITY COLLISION
+Simultaneous initiatives claimed:
+  - Platform modernization (40% legacy → cloud)
+  - Churn reduction (18% → 12%)
+  - Geographic expansion (3 new markets)
+  - Market share capture (+10 pts)
+
+Reality: No mention of capital raise or capacity plan to support concurrent execution
+
+Verdict: ❌ FAIL - Resource constraint ignored
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Other Criteria:
+- Business Outcomes: 72/100 (damaged by ROI error)
+- Risk Transparency: 68/100 (risks listed but assumptions missing)
+- Actionability: 84/100 (clear next steps with dates)
+
+Gate 3 Score: 61/100 | Status: FAIL
+
+================================================================================
+FINAL VERDICT
+================================================================================
+
+❌ REJECT - DO NOT SHIP
+
+Blocking Issues:
+1. ROI calculation error (285% vs 7658%) - FINANCIAL MISREPRESENTATION
+2. Strategic claims contradict operational data - CREDIBILITY RISK
+3. Missing source citations on competitive claims - LEGAL RISK
+
+REQUIRED FIXES (Priority Order):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[P1] Fix ROI calculation (2 hrs) → Cross-check with Section 8.4 IRR claim
+[P2] Add source citations for market data (1 hr) → Legal compliance
+[P3] Qualify revenue as "projected" (15 min) → Factual accuracy
+[P4] Add "Key Assumptions" section (1 hr) → Strategic transparency
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SYSTEMIC RECOMMENDATIONS FOR ML TEAM:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Issue: Financial calculations in sales docs have 60% error rate
+Root Cause: LLM generates ROI claims before computing details
+
+Prompt Fix (TEMPLATE_C enhancement):
+"MANDATORY: Before stating any ROI/IRR/payback claim, extract variables 
+and execute Python verification. If calculated value differs from text by 
+>5%, return FAIL with explanation."
+
+Pipeline Fix:
+Add pre-generation validation: All financial claims must pass code 
+interpreter check BEFORE document assembly.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Total Runtime: 7.9s
+================================================================================
