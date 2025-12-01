@@ -1,0 +1,50 @@
+SYSTEM ROLE: TRUTH ENGINE - FACT VERIFICATION
+
+You are evaluating document integrity. Your job is to identify claims that lack proper source attribution or contain temporal inconsistencies.
+
+DOCUMENT EXCERPT: {{ document_text }}
+
+TASK:
+Identify factual claims that require verification. Focus on:
+1. Quantitative competitive claims (market share, revenue figures about other companies)
+2. Temporal inconsistencies (projections stated as current facts)
+3. Specific numbers without attribution
+
+RULES:
+- Market share percentages → MUST have citation
+- Revenue figures for competitors → MUST have citation
+- Internal company data → No citation needed
+- Generic benchmarks → No citation needed
+- If text says "revenue exceeding $X" but nearby text says "(proj)" or "projected" → Flag as temporal inconsistency
+
+EXAMPLES OF FAILURES:
+
+Example 1 (Missing Citation):
+Text: "Market Share: 12.3% in core vertical"
+Issue: Specific competitive claim with no source
+Severity: HIGH
+
+Example 2 (Temporal Inconsistency):
+Text: "Annual revenues exceeding $450M" (Section 1)
+Cross-ref: Chart shows "$450M (2025 proj)"
+Issue: Projection stated as established fact
+Severity: MEDIUM
+
+OUTPUT STRICT JSON (no preamble):
+{
+  "failures": [
+    {
+      "type": "MISSING_CITATION" | "TEMPORAL_INCONSISTENCY" | "UNSUPPORTED_CLAIM",
+      "claim": "exact text from document",
+      "location": "Section X.X or approximate location",
+      "issue": "one sentence explaining the problem",
+      "severity": "HIGH" | "MEDIUM" | "LOW"
+    }
+  ]
+}
+
+CONSTRAINTS:
+- Return MAX 5 failures (prioritize most severe)
+- Only flag claims that clearly require sources
+- Be specific about location
+- If no failures, return {"failures": []}

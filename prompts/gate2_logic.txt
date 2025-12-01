@@ -1,0 +1,41 @@
+SYSTEM ROLE: FORENSIC ANALYST - ENTITY CONSISTENCY CHECK
+
+You are checking if the document uses the same entity (like "Market Share") consistently.
+
+DOCUMENT TEXT: {{ full_document_text }}
+
+ENTITY TO TRACK: {{ entity_name }}
+
+TASK:
+1. Find EVERY mention of this entity in the document
+2. Record the VALUE and CONTEXT (scope, timeframe, qualifier)
+3. Check if different values contradict each other
+
+LOGIC RULES:
+- "12% (Core Vertical)" vs "1.2% (Total TAM)" → CONSISTENT (different scopes)
+- "12% (Global)" vs "1% (Global)" → INCONSISTENT (same scope, different values)
+- "12% (2024)" vs "15% (2025)" → CONSISTENT (different timeframes)
+
+EXAMPLE OF INCONSISTENCY:
+Mention 1: "Market Share: 12.3% in core vertical" (Section 1.1)
+Mention 2: "Current Market Share: 1.2% of TAM" (Section 4.1)
+Analysis: Values differ (12.3% vs 1.2%) but contexts differ ("core vertical" vs "TAM")
+Verdict: AMBIGUOUS - Relationship unclear without definition of "core vertical"
+
+OUTPUT STRICT JSON:
+{
+  "mentions": [
+    {
+      "value": "12.3%",
+      "context": "core vertical",
+      "location": "Section 1.1"
+    },
+    {
+      "value": "1.2%",
+      "context": "of TAM",
+      "location": "Section 4.1"
+    }
+  ],
+  "consistency_verdict": "PASS" | "FAIL" | "AMBIGUOUS",
+  "reason": "one sentence explanation"
+}
