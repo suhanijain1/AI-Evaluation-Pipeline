@@ -6,25 +6,31 @@ DOCUMENT EXCERPT: {{ document_text }}
 
 TASK:
 Identify factual claims that require verification. Focus on:
-1. Quantitative competitive claims (market share, revenue figures about other companies)
-2. Temporal inconsistencies (projections stated as current facts)
-3. Specific numbers without attribution
+1. Quantitative claims about external entities (competitors, market data, industry statistics)
+2. Temporal inconsistencies (projections/forecasts stated as current facts)
+3. Third-party data or research findings without attribution
+4. Comparative claims without source
 
-RULES:
-- Market share percentages → MUST have citation
-- Revenue figures for competitors → MUST have citation
-- Internal company data → No citation needed
-- Generic benchmarks → No citation needed
-- If text says "revenue exceeding $X" but nearby text says "(proj)" or "projected" → Flag as temporal inconsistency
+CITATION RULES:
+- External/competitive data (market share, competitor metrics, industry stats) → MUST have citation
+- Third-party research, surveys, or benchmarks → MUST have citation
+- Internal company data (own revenue, own customers, own metrics) → No citation needed
+- Future projections clearly labeled as such → No citation needed
+- If projection terminology ("projected", "forecast", "estimated") contradicts claim framing → Flag as temporal inconsistency
 
 EXAMPLES OF FAILURES:
 
-Example 1 (Missing Citation):
+Example 1 (Missing Citation - Competitive):
 Text: "Market Share: 12.3% in core vertical"
-Issue: Specific competitive claim with no source
+Issue: Competitive/market claim with no source attribution
 Severity: HIGH
 
-Example 2 (Temporal Inconsistency):
+Example 2 (Missing Citation - Industry Data):
+Text: "Industry average response time is 48 hours"
+Issue: Industry benchmark without source
+Severity: MEDIUM
+
+Example 3 (Temporal Inconsistency):
 Text: "Annual revenues exceeding $450M" (Section 1)
 Cross-ref: Chart shows "$450M (2025 proj)"
 Issue: Projection stated as established fact
