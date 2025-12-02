@@ -91,7 +91,8 @@ def evaluate_single_pdf(pdf_path: str, doc_type: str, target_persona: str, outpu
     print("\n" + "="*80)
     print(f"✅ Evaluation Complete!")
     print(f"Final Verdict: {result['final_verdict']}")
-    print(f"Final Score: {result['final_score']:.0f}/100")
+    if 'final_score' in result:
+        print(f"Final Score: {result['final_score']:.0f}/100")
     print("="*80)
     
     # Save summary
@@ -105,14 +106,14 @@ Document Type: {doc_type}
 Target Persona: {target_persona}
 
 Final Verdict: {result['final_verdict']}
-Final Score: {result['final_score']:.0f}/100
+Final Score: {result.get('final_score', 'N/A')}/100
 
 Gate Scores:
-- Gate 1 (Integrity): {result['gate1_score']}/100
-- Gate 2 (Logic): {result['gate2_score']}/100
-- Gate 3 (Strategy): {result['gate3_score']}/100
+- Gate 1 (Integrity): {result.get('gate1_score', 'N/A')}/100
+- Gate 2 (Logic): {result.get('gate2_score', 'N/A')}/100
+- Gate 3 (Strategy): {result.get('gate3_score', 'N/A')}/100
 
-Blocking Issues: {result['blocking_issues']}
+Blocking Issues: {result.get('blocking_issues', 'Unknown')}
 
 Full evaluation report: {output_path}
 """)
@@ -159,7 +160,7 @@ def main():
             output_name="acme_rfp"
         )
         if result:
-            results.append({"name": "RFP Response", "verdict": result['final_verdict'], "score": result['final_score']})
+            results.append({"name": "RFP Response", "verdict": result['final_verdict'], "score": result.get('final_score', 'N/A')})
     
     # Evaluate Sales Intelligence
     if mode in ["sales", "both"]:
@@ -170,7 +171,7 @@ def main():
             output_name="sales_intelligence"
         )
         if result:
-            results.append({"name": "Sales Intelligence", "verdict": result['final_verdict'], "score": result['final_score']})
+            results.append({"name": "Sales Intelligence", "verdict": result['final_verdict'], "score": result.get('final_score', 'N/A')})
     
     # Print summary
     if results:
@@ -179,7 +180,8 @@ def main():
         print("="*80)
         for r in results:
             emoji = "✅" if r['verdict'] == "APPROVE" else "⚠️" if r['verdict'] == "REVISE" else "❌"
-            print(f"{emoji} {r['name']}: {r['verdict']} ({r['score']:.0f}/100)")
+            score_str = f"{r['score']:.0f}/100" if isinstance(r['score'], (int, float)) else r['score']
+            print(f"{emoji} {r['name']}: {r['verdict']} ({score_str})")
         print("="*80)
 
 
