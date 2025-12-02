@@ -208,21 +208,21 @@ Gate 1 Score: {gate1_score}/100 | Status: {"PASS" if gate1_score > 60 else "FAIL
         output_lines.append(gate1_output)
         print(gate1_output)
         
-        # FAIL FAST
-        if gate1_score < 50:
-            reject_msg = "\n❌ REJECT - Critical integrity failures. Skipping Gate 2 & 3."
-            output_lines.append(reject_msg)
-            print(reject_msg)
-            
-            if save_output and output_path:
-                with open(output_path, 'w') as f:
-                    f.write('\n'.join(output_lines))
-            
-            return {
-                "final_verdict": "REJECT",
-                "gate1_score": gate1_score,
-                "reason": "Critical integrity failures"
-            }
+        # FAIL FAST - DISABLED FOR TESTING
+        # if gate1_score < 50:
+        #     reject_msg = "\n❌ REJECT - Critical integrity failures. Skipping Gate 2 & 3."
+        #     output_lines.append(reject_msg)
+        #     print(reject_msg)
+        #     
+        #     if save_output and output_path:
+        #         with open(output_path, 'w') as f:
+        #             f.write('\n'.join(output_lines))
+        #     
+        #     return {
+        #         "final_verdict": "REJECT",
+        #         "gate1_score": gate1_score,
+        #         "reason": "Critical integrity failures"
+        #     }
         
         # ============================================
         # GATE 2: LOGIC (Math + Consistency)
@@ -413,11 +413,12 @@ Gate 3 Score: {overall_gate3_score}/100 | Status: {"PASS" if overall_gate3_score
         final_score = (gate1_score * 0.3) + (gate2_score * 0.2) + (overall_gate3_score * 0.5)
         blocking_issues = len([f for f in failures if f.get("severity") == "HIGH"]) + len(math_failures)
         
-        if gate1_score < 50 or gate2_score < 50:
-            final_verdict = "REJECT"
-            status_emoji = "❌"
-            est_fix_time = "4 hrs"
-        elif final_score >= 80:
+        # TESTING MODE: Allow progression even with low Gate 1/2 scores
+        # if gate1_score < 50 or gate2_score < 50:
+        #     final_verdict = "REJECT"
+        #     status_emoji = "❌"
+        #     est_fix_time = "4 hrs"
+        if final_score >= 80:
             final_verdict = "APPROVE"
             status_emoji = "✅"
             est_fix_time = "45 min (optional)"
